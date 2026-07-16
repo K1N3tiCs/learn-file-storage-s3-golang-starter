@@ -1,6 +1,8 @@
 package main
 
 import (
+	"crypto/rand"
+	"encoding/base64"
 	"fmt"
 	"io"
 	"net/http"
@@ -66,8 +68,14 @@ func (cfg *apiConfig) handlerUploadThumbnail(w http.ResponseWriter, r *http.Requ
 		respondWithError(w, http.StatusUnauthorized, "unauthorized video", err)
 		return
 	}
+	randomBytes := make([]byte, 32)
+	_, err = rand.Read(randomBytes)
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, "couldn't fill random bytes", err)
+		return
+	}
 
-	thumbnailFile := filepath.Join("./assets/", videoIDString+"."+mediaExtension[1])
+	thumbnailFile := filepath.Join("./assets/", base64.RawURLEncoding.EncodeToString(randomBytes)+"."+mediaExtension[1])
 	destFile, err := os.Create(thumbnailFile)
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, "couldn't save file", err)
