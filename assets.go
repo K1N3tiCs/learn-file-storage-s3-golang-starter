@@ -40,6 +40,10 @@ func (cfg apiConfig) getAssetURL(assetPath string) string {
 	return fmt.Sprintf("https://localhost:%s/assets/%s", cfg.port, assetPath)
 }
 
+func (cfg apiConfig) getCFObjectURL(key string) string {
+	return fmt.Sprintf("https://%s/%s", cfg.s3CfDistribution, key)
+}
+
 func mediaTypeToExt(mediaType string) string {
 	parts := strings.Split(mediaType, "/")
 	if len(parts) != 2 {
